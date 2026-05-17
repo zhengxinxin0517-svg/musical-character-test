@@ -331,6 +331,7 @@ function ResultScreen({
   const isViewingCompanionPersona = displayedPrimary.persona.id !== result.primary.persona.id;
   const showsGalleryReturnControls = Boolean(onBackToGallery && onBackToMyResult);
   const isGalleryDetailView = showsGalleryReturnControls;
+  const showsMatchBadge = displayedPrimary.persona.id === result.primary.persona.id && !isGalleryDetailView;
 
   async function saveResultImage() {
     if (isSaving) {
@@ -426,9 +427,11 @@ function ResultScreen({
           <figcaption>{persona.englishName}</figcaption>
         </figure>
 
-        <div className="match-row">
-          <span className="match-badge">匹配度 {result.primary.percentage}%</span>
-        </div>
+        {showsMatchBadge && (
+          <div className="match-row">
+            <span className="match-badge">匹配度 {result.primary.percentage}%</span>
+          </div>
+        )}
 
         {hasSupplementImages && (
           <>
