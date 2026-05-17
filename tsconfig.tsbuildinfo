@@ -1,1 +1,0 @@
-{"root":["./src/app.tsx","./src/main.tsx","./src/types.ts","./src/data/content.test.ts","./src/data/personas.ts","./src/data/questions.ts","./src/logic/quizflow.test.ts","./src/logic/quizflow.ts","./src/logic/scoring.test.ts","./src/logic/scoring.ts"],"version":"5.9.3"}
