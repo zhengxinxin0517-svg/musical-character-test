@@ -248,6 +248,7 @@ button {
 .primary-button,
 .secondary-button,
 .save-button,
+.explore-button,
 .ghost-button {
   min-height: 48px;
   border-radius: 8px;
@@ -266,6 +267,7 @@ button {
 
 .primary-button:active,
 .secondary-button:active,
+.explore-button:active,
 .ghost-button:active,
 .option-button:active {
   transform: translateY(1px);
@@ -293,6 +295,22 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.poster-header {
+  justify-content: space-between;
+  min-height: 38px;
+}
+
+.poster-header-actions {
+  display: grid;
+  gap: 8px;
+  align-items: center;
+  justify-items: start;
+}
+
+.poster-header .source {
+  margin-left: auto;
 }
 
 .ghost-button {
@@ -549,6 +567,64 @@ button {
 
 .result-poster .source {
   color: #8a7b82;
+  text-align: right;
+}
+
+.back-persona-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  padding: 0 12px 0 10px;
+  color: var(--accent-deep);
+  background:
+    radial-gradient(circle at 18% 0, rgba(255, 255, 255, 0.95), transparent 28px),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), var(--accent-faint));
+  box-shadow: 0 10px 20px var(--accent-soft), inset 0 0 0 1px rgba(255, 255, 255, 0.68);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 950;
+  line-height: 1;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+
+.gallery-hero > .back-persona-chip {
+  min-height: 42px;
+  padding: 0 16px 0 13px;
+  font-size: 0.92rem;
+}
+
+.back-persona-chip-secondary {
+  color: #6d6068;
+  background:
+    radial-gradient(circle at 18% 0, rgba(255, 255, 255, 0.95), transparent 28px),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 250, 244, 0.78));
+}
+
+.back-persona-chip::before {
+  content: "‹";
+  font-size: 1.2rem;
+  font-weight: 950;
+  line-height: 0.8;
+}
+
+.back-persona-chip:hover,
+.back-persona-chip:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 52%, #ffffff);
+  box-shadow: 0 14px 26px var(--accent-soft), inset 0 0 0 1px rgba(255, 255, 255, 0.76);
+  transform: translateY(-1px);
+}
+
+.back-persona-chip:focus-visible {
+  outline: 3px solid var(--accent-soft);
+  outline-offset: 2px;
+}
+
+.back-persona-chip:active {
+  transform: translateY(0);
 }
 
 .easter-egg-banner {
@@ -1622,9 +1698,238 @@ blockquote {
   box-shadow: 0 12px 24px rgba(91, 69, 77, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
 }
 
+.explore-button {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--accent) 36%, #ffffff);
+  color: var(--accent-deep);
+  background:
+    radial-gradient(circle at 12% 0, rgba(255, 255, 255, 0.98), transparent 56px),
+    linear-gradient(135deg, var(--accent-faint), rgba(255, 250, 244, 0.92));
+  box-shadow: 0 12px 24px var(--accent-soft), inset 0 0 0 1px rgba(255, 255, 255, 0.72);
+  font: inherit;
+  font-weight: 950;
+}
+
 .save-button:disabled {
   cursor: wait;
   opacity: 0.68;
+}
+
+.persona-gallery-screen {
+  display: grid;
+  gap: 14px;
+  padding-bottom: 28px;
+}
+
+.gallery-hero {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(181, 123, 69, 0.24);
+  border-radius: 18px;
+  padding: 18px;
+  background:
+    radial-gradient(circle at 82% 12%, rgba(236, 98, 107, 0.14), transparent 110px),
+    radial-gradient(circle at 12% 0, rgba(255, 211, 138, 0.22), transparent 120px),
+    linear-gradient(180deg, rgba(255, 250, 244, 0.98), rgba(255, 246, 238, 0.88));
+  box-shadow: 0 18px 44px rgba(91, 69, 77, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.74);
+}
+
+.gallery-hero::after {
+  position: absolute;
+  right: 16px;
+  bottom: 4px;
+  color: rgba(181, 123, 69, 0.16);
+  content: "♪";
+  font-size: 5.6rem;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.gallery-hero p {
+  margin: 16px 0 6px;
+  color: #b57b45;
+  font-size: 0.78rem;
+  font-weight: 950;
+}
+
+.gallery-hero h1 {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  color: #211a24;
+  font-size: clamp(2rem, 9vw, 3rem);
+  font-weight: 950;
+  line-height: 1.1;
+}
+
+.gallery-hero span {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-top: 10px;
+  color: #6b6067;
+  font-size: 0.92rem;
+  font-weight: 750;
+  line-height: 1.7;
+}
+
+.persona-gallery-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.persona-gallery-card {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  border: 1px solid var(--accent-border);
+  border-radius: 16px;
+  padding: 12px;
+  color: inherit;
+  background:
+    radial-gradient(circle at 95% 0, var(--accent-soft), transparent 118px),
+    linear-gradient(135deg, rgba(255, 250, 244, 0.98), var(--accent-faint));
+  box-shadow: 0 16px 34px rgba(91, 69, 77, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.persona-gallery-card::after {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  color: var(--accent);
+  content: "查看详情 ›";
+  font-size: 0.72rem;
+  font-weight: 950;
+  opacity: 0.68;
+}
+
+.persona-gallery-card:hover,
+.persona-gallery-card:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 56%, #ffffff);
+  box-shadow: 0 20px 42px var(--accent-soft), inset 0 0 0 1px rgba(255, 255, 255, 0.74);
+  transform: translateY(-2px);
+}
+
+.persona-gallery-card:focus-visible {
+  outline: 3px solid var(--accent-soft);
+  outline-offset: 3px;
+}
+
+.persona-gallery-card:active {
+  transform: translateY(0);
+}
+
+.gallery-card-top,
+.gallery-card-main,
+.gallery-card-tags {
+  position: relative;
+  z-index: 1;
+}
+
+.gallery-card-top {
+  display: grid;
+  grid-template-columns: 1fr 72px;
+  gap: 10px;
+  align-items: start;
+}
+
+.gallery-card-top span {
+  color: #8a7b82;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.gallery-card-top strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--accent);
+  font-size: clamp(1.7rem, 8vw, 2.6rem);
+  font-weight: 950;
+  line-height: 1;
+}
+
+.gallery-card-top img {
+  width: 72px;
+  aspect-ratio: 3 / 4;
+  border: 1px solid var(--accent-border);
+  border-radius: 10px;
+  background: #fffaf4;
+  object-fit: cover;
+  box-shadow: 0 10px 18px var(--accent-soft);
+}
+
+.gallery-card-main {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.gallery-card-main > img {
+  width: 76px;
+  height: 76px;
+  border: 1px solid var(--accent-border);
+  border-radius: 14px;
+  background: #fffaf4;
+  object-fit: contain;
+  box-shadow: 0 12px 22px var(--accent-soft);
+}
+
+.gallery-card-main h2 {
+  margin: 0;
+  color: #211a24;
+  font-size: 1.08rem;
+  font-weight: 950;
+  line-height: 1.28;
+}
+
+.gallery-card-main p {
+  margin: 5px 0 0;
+  color: #6d6068;
+  font-size: 0.82rem;
+  font-weight: 850;
+  line-height: 1.35;
+}
+
+.gallery-card-line {
+  position: relative;
+  z-index: 1;
+  margin: 12px 0 0;
+  border-left: 4px solid var(--accent);
+  border-radius: 10px;
+  padding: 10px 11px;
+  color: #493f46;
+  background: rgba(255, 255, 255, 0.62);
+  font-size: 0.88rem;
+  font-weight: 800;
+  line-height: 1.58;
+}
+
+.gallery-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 10px 76px 0 0;
+}
+
+.gallery-card-tags span {
+  border-radius: 999px;
+  padding: 6px 9px;
+  color: var(--accent-deep);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 0 0 1px var(--accent-border);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.gallery-reset {
+  margin-top: 2px;
 }
 
 .share-capture-stage {
@@ -2055,7 +2360,16 @@ blockquote {
   .home-screen,
   .quiz-layout,
   .result-layout,
+  .persona-gallery-screen,
   .incomplete-screen {
     width: min(100%, 560px);
+  }
+
+  .persona-gallery-screen {
+    width: min(100%, 720px);
+  }
+
+  .persona-gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

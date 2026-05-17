@@ -5,7 +5,7 @@ import { addWeights, calculateResult, createEmptyScores } from './logic/scoring'
 import { getFirstUnansweredIndex, hasCompleteAnswers } from './logic/quizFlow';
 import type { PersonaMatch, QuizResult } from './types';
 
-type Screen = 'home' | 'quiz' | 'result';
+type Screen = 'home' | 'quiz' | 'result' | 'gallery';
 
 type PersonaStyle = CSSProperties & {
   '--accent': string;
@@ -21,6 +21,7 @@ export default function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [isAdvancing, setIsAdvancing] = useState(false);
+  const [galleryPersonaId, setGalleryPersonaId] = useState<string | null>(null);
   const advancingRef = useRef(false);
 
   const result = useMemo<QuizResult | null>(() => {
@@ -85,8 +86,25 @@ export default function App() {
     setAnswers({});
     setCurrentIndex(0);
     setIsAdvancing(false);
+    setGalleryPersonaId(null);
     advancingRef.current = false;
     setScreen('home');
+  }
+
+  function openGallery() {
+    setGalleryPersonaId(null);
+    setScreen('gallery');
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  function openGalleryPersona(personaId: string) {
+    setGalleryPersonaId(personaId);
+    setScreen('gallery');
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
 
   return (
@@ -150,7 +168,7 @@ export default function App() {
         </section>
       )}
 
-      {screen === 'result' && result && <ResultScreen onReset={resetQuiz} result={result} />}
+      {screen === 'result' && result && <ResultScreen onExplore={openGallery} onReset={resetQuiz} result={result} />}
       {screen === 'result' && !result && (
         <IncompleteScreen
           onResume={() => {
@@ -158,6 +176,26 @@ export default function App() {
             setCurrentIndex(firstUnansweredIndex === -1 ? 0 : firstUnansweredIndex);
             setScreen('quiz');
           }}
+          onReset={resetQuiz}
+        />
+      )}
+
+      {screen === 'gallery' && result && galleryPersonaId && (
+        <ResultScreen
+          initialPersonaId={galleryPersonaId}
+          key={`gallery-${galleryPersonaId}`}
+          onBackToGallery={openGallery}
+          onBackToMyResult={() => setScreen('result')}
+          onExplore={openGallery}
+          onReset={resetQuiz}
+          result={result}
+        />
+      )}
+
+      {screen === 'gallery' && (!result || !galleryPersonaId) && (
+        <PersonaGalleryScreen
+          onBack={() => setScreen(result ? 'result' : 'home')}
+          onOpenPersona={openGalleryPersona}
           onReset={resetQuiz}
         />
       )}
@@ -256,8 +294,22 @@ function getCompanionMatchForPersona(result: QuizResult, personaId: string): Per
   return result.primary.persona.id === personaId ? result.secondary : result.primary;
 }
 
-function ResultScreen({ onReset, result }: { onReset: () => void; result: QuizResult }) {
-  const [displayedPersonaId, setDisplayedPersonaId] = useState(result.primary.persona.id);
+function ResultScreen({
+  initialPersonaId,
+  onBackToGallery,
+  onBackToMyResult,
+  onExplore,
+  onReset,
+  result
+}: {
+  initialPersonaId?: string;
+  onBackToGallery?: () => void;
+  onBackToMyResult?: () => void;
+  onExplore: () => void;
+  onReset: () => void;
+  result: QuizResult;
+}) {
+  const [displayedPersonaId, setDisplayedPersonaId] = useState(initialPersonaId ?? result.primary.persona.id);
   const displayedPrimary = getResultMatchForPersona(result, displayedPersonaId);
   const displayedSecondary = getCompanionMatchForPersona(result, displayedPrimary.persona.id);
   const displayedResult: QuizResult = {
@@ -276,6 +328,9 @@ function ResultScreen({ onReset, result }: { onReset: () => void; result: QuizRe
   const stillTitle = persona.stillTitle ?? persona.englishName;
   const stillTitleCn = persona.stillTitleCn ?? getCharacterCn(persona.name);
   const showsRareEasterEggBanner = persona.id === 'curtain';
+  const isViewingCompanionPersona = displayedPrimary.persona.id !== result.primary.persona.id;
+  const showsGalleryReturnControls = Boolean(onBackToGallery && onBackToMyResult);
+  const isGalleryDetailView = showsGalleryReturnControls;
 
   async function saveResultImage() {
     if (isSaving) {
@@ -338,6 +393,21 @@ function ResultScreen({ onReset, result }: { onReset: () => void; result: QuizRe
     <section className="result-layout" style={personaStyle}>
       <article className="result-poster" data-persona={persona.id} style={personaStyle}>
         <div className="poster-header">
+          {showsGalleryReturnControls && (
+            <div className="poster-header-actions">
+              <button className="back-persona-chip" onClick={onBackToGallery} type="button">
+                返回人格列表
+              </button>
+              <button className="back-persona-chip back-persona-chip-secondary" onClick={onBackToMyResult} type="button">
+                返回我的人格
+              </button>
+            </div>
+          )}
+          {!showsGalleryReturnControls && isViewingCompanionPersona && (
+            <button className="back-persona-chip" onClick={() => openPersonaResult(result.primary.persona.id)} type="button">
+              返回我的人格
+            </button>
+          )}
           <span className="source">{persona.source}</span>
         </div>
 
@@ -436,17 +506,22 @@ function ResultScreen({ onReset, result }: { onReset: () => void; result: QuizRe
 
         <ShowNote text={persona.shareText} />
 
-        <RoommateCard onOpen={() => openPersonaResult(secondary.id)} persona={secondary} />
+        {!isGalleryDetailView && <RoommateCard onOpen={() => openPersonaResult(secondary.id)} persona={secondary} />}
       </article>
 
-      <div className="result-actions">
-        <button className="primary-button" onClick={onReset} type="button">
-          重新测一次
-        </button>
-        <button className="save-button" disabled={isSaving} onClick={saveResultImage} type="button">
-          {isSaving ? '正在生成图片...' : '保存结果为图片'}
-        </button>
-      </div>
+      {!isGalleryDetailView && (
+        <div className="result-actions">
+          <button className="primary-button" onClick={onReset} type="button">
+            重新测一次
+          </button>
+          <button className="explore-button" onClick={onExplore} type="button">
+            查看更多人格
+          </button>
+          <button className="save-button" disabled={isSaving} onClick={saveResultImage} type="button">
+            {isSaving ? '正在生成图片...' : '保存结果为图片'}
+          </button>
+        </div>
+      )}
 
       {savedImageUrl && (
         <div className="image-preview" role="dialog" aria-modal="true" aria-label="保存结果图片预览">
@@ -463,6 +538,85 @@ function ResultScreen({ onReset, result }: { onReset: () => void; result: QuizRe
         </div>
       )}
     </section>
+  );
+}
+
+function PersonaGalleryScreen({
+  onBack,
+  onOpenPersona,
+  onReset
+}: {
+  onBack: () => void;
+  onOpenPersona: (personaId: string) => void;
+  onReset: () => void;
+}) {
+  return (
+    <section className="persona-gallery-screen">
+      <header className="gallery-hero">
+        <button className="back-persona-chip" onClick={onBack} type="button">
+          返回结果
+        </button>
+        <p>MCTI Cast Book</p>
+        <h1>音乐剧人格图鉴</h1>
+        <span>15 种角色人格，含两个隐藏彩蛋。你可以慢慢翻，像在后台偷看全剧组精神状态。</span>
+      </header>
+
+      <div className="persona-gallery-grid">
+        {personas.map((persona) => (
+          <PersonaGalleryCard key={persona.id} onOpen={() => onOpenPersona(persona.id)} persona={persona} />
+        ))}
+      </div>
+
+      <button className="primary-button gallery-reset" onClick={onReset} type="button">
+        重新测一次
+      </button>
+    </section>
+  );
+}
+
+function PersonaGalleryCard({
+  onOpen,
+  persona
+}: {
+  onOpen: () => void;
+  persona: (typeof personas)[number];
+}) {
+  const style = createPersonaStyle(persona.accent);
+  const posterTitle = persona.posterTitle ?? persona.source;
+  const posterPath = persona.posterPath ?? `/posters/${persona.source}.png`;
+
+  return (
+    <button
+      aria-label={`查看${persona.name}人格详情`}
+      className="persona-gallery-card"
+      onClick={onOpen}
+      style={style}
+      type="button"
+    >
+      <div className="gallery-card-top">
+        <div>
+          <span>{posterTitle}</span>
+          <strong>{persona.code}</strong>
+        </div>
+        <img alt={`${posterTitle} poster`} src={posterPath} />
+      </div>
+
+      <div className="gallery-card-main">
+        <img alt={`${persona.englishName} character portrait`} src={persona.imagePath} />
+        <div>
+          <h2>{persona.title}</h2>
+          <p>{persona.name.replace(/^彩蛋人格：/, '')} · {persona.englishName}</p>
+        </div>
+      </div>
+
+      <p className="gallery-card-line">{persona.punchline}</p>
+
+      <div className="gallery-card-tags">
+        {persona.strengths.slice(0, 3).map((strength) => (
+          <span key={strength}>{strength}</span>
+        ))}
+      </div>
+    </button>
   );
 }
 
