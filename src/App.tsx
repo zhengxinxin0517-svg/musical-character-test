@@ -266,7 +266,7 @@ function applyEasterEggTrigger(
 }
 
 function getTriggeredEasterEggId(answers: Record<number, string>) {
-  if (answers[15] === 'c' && answers[16] === 'd' && answers[19] === 'd') {
+  if (answers[4] === 'a' && answers[5] === 'a' && answers[16] === 'd') {
     return 'plant';
   }
 
