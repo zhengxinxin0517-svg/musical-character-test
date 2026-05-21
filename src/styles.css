@@ -550,6 +550,39 @@ button {
   box-shadow: 0 18px 46px var(--accent-soft), 0 1px 0 rgba(255, 255, 255, 0.88) inset;
 }
 
+.result-poster[data-persona="roxie"] {
+  border-color: rgba(207, 177, 103, 0.48);
+  color: #251f22;
+  background:
+    radial-gradient(circle at 50% 6%, rgba(255, 255, 255, 0.96), transparent 118px),
+    radial-gradient(circle at 12% 18%, rgba(238, 217, 164, 0.28), transparent 150px),
+    radial-gradient(circle at 86% 28%, rgba(255, 255, 255, 0.82), transparent 120px),
+    radial-gradient(circle at 72% 84%, rgba(196, 154, 74, 0.16), transparent 170px),
+    linear-gradient(180deg, #fffdf8 0%, #fbf4e6 48%, #f7ead5 100%),
+    repeating-linear-gradient(115deg, rgba(201, 168, 90, 0.065) 0 1px, transparent 1px 18px);
+  box-shadow:
+    0 22px 52px rgba(176, 137, 68, 0.2),
+    0 1px 0 rgba(255, 255, 255, 0.95) inset;
+}
+
+.result-poster[data-persona="roxie"]::before {
+  background:
+    linear-gradient(90deg, rgba(201, 168, 90, 0.12) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(201, 168, 90, 0.08) 1px, transparent 1px),
+    radial-gradient(circle at 16% 32%, rgba(255, 255, 255, 0.9) 0 1px, transparent 2px),
+    radial-gradient(circle at 72% 18%, rgba(201, 168, 90, 0.46) 0 1px, transparent 2px),
+    radial-gradient(circle at 88% 62%, rgba(255, 255, 255, 0.95) 0 1px, transparent 2px);
+  background-size: 42px 42px, 42px 42px, 118px 118px, 96px 96px, 132px 132px;
+  opacity: 0.32;
+}
+
+.result-poster[data-persona="roxie"]::after {
+  background:
+    radial-gradient(ellipse at center, rgba(255, 255, 255, 0.58) 0 18%, transparent 60%),
+    linear-gradient(90deg, transparent, rgba(201, 168, 90, 0.2), transparent);
+  opacity: 0.72;
+}
+
 .match-badge {
   border-radius: 999px;
   padding: 8px 12px;

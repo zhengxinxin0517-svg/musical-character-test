@@ -479,8 +479,8 @@ function ResultScreen({
         </div>
 
         <div className="tag-grid">
-          {result.topTraits.map((trait) => (
-            <span key={trait.key}>{trait.label}</span>
+          {(persona.tags ?? result.topTraits.map((trait) => trait.label)).map((tag) => (
+            <span key={tag}>{tag}</span>
           ))}
         </div>
 

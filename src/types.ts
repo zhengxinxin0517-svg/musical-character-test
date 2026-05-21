@@ -50,6 +50,7 @@ export type Persona = {
   modernLife: string;
   strengths: string[];
   pitfalls: string[];
+  tags?: string[];
   recommendation: string;
   shareText: string;
   accent: string;
