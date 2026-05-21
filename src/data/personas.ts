@@ -74,6 +74,7 @@ export const personas: Persona[] = [
     code: '我来背锅',
     source: 'Les Miserables',
     imagePath: '/characters/Jean Valjean.png',
+    stillPath: '/stills/Jean Valjean.jpg',
     momentMediaPath: '/moments/Jean_Valjean.mp4',
     momentMediaAlt: 'Jean Valjean scene clip',
     title: '人间责任背包客',
