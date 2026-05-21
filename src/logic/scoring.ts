@@ -1,4 +1,13 @@
-import { dimensionKeys, type DimensionKey, type Persona, type QuizResult, type ScoreVector, type Trait, type UserScores } from '../types';
+import {
+  dimensionKeys,
+  type DimensionKey,
+  type Persona,
+  type PersonaScoreVector,
+  type QuizResult,
+  type ScoreVector,
+  type Trait,
+  type UserScores
+} from '../types';
 
 export const traitLabels: Record<DimensionKey, string> = {
   ambition: '想赢但嘴硬',
@@ -33,18 +42,34 @@ export function addWeights(scores: UserScores, weights: ScoreVector): UserScores
   return next;
 }
 
+export function createEmptyPersonaScores(): PersonaScoreVector {
+  return {};
+}
+
+export function addPersonaScores(scores: PersonaScoreVector, personaScores: PersonaScoreVector = {}): PersonaScoreVector {
+  const next = { ...scores };
+  for (const [personaId, value] of Object.entries(personaScores)) {
+    next[personaId] = (next[personaId] ?? 0) + value;
+  }
+  return next;
+}
+
 export function normalizeScore(similarity: number): number {
   return Math.round(((similarity + 1) / 2) * 100);
 }
 
-export function calculateResult(scores: UserScores, personas: Persona[]): QuizResult {
+export function calculateResult(
+  scores: UserScores,
+  personas: Persona[],
+  personaScores: PersonaScoreVector = {}
+): QuizResult {
   if (personas.length < 2) {
     throw new Error('At least two personas are required to calculate a result.');
   }
 
   const matches = personas
     .map((persona) => {
-      const similarity = cosineSimilarity(scores, persona.vector);
+      const similarity = calculatePersonaMatch(scores, persona.vector, persona.id, personaScores);
       return {
         persona,
         similarity,
@@ -74,6 +99,29 @@ function getWeakTrait(scores: UserScores): Trait {
     .sort((a, b) => a.value - b.value)[0];
 }
 
+function calculatePersonaMatch(
+  scores: UserScores,
+  vector: ScoreVector,
+  personaId: string,
+  personaScores: PersonaScoreVector
+): number {
+  const dimensionSimilarity = cosineSimilarity(scores, vector);
+  const personaScore = personaScores[personaId] ?? 0;
+  const maxPersonaScore = Math.max(...Object.values(personaScores), 0);
+  const directSignal = maxPersonaScore > 0 ? personaScore / maxPersonaScore : 0;
+  const keySignal = signatureAlignment(scores, vector);
+  const directSimilarity = directSignal * 2 - 1;
+  const keySimilarity = keySignal * 2 - 1;
+  const javertPenalty = personaId === 'javert' && personaScore < 8 ? 0.32 : 0;
+
+  return clampSimilarity(
+    directSimilarity * 0.6 +
+    dimensionSimilarity * 0.3 +
+    keySimilarity * 0.1 -
+    javertPenalty
+  );
+}
+
 function cosineSimilarity(scores: UserScores, vector: ScoreVector): number {
   let dot = 0;
   let scoreMagnitude = 0;
@@ -92,4 +140,27 @@ function cosineSimilarity(scores: UserScores, vector: ScoreVector): number {
   }
 
   return dot / (Math.sqrt(scoreMagnitude) * Math.sqrt(personaMagnitude));
+}
+
+function signatureAlignment(scores: UserScores, vector: ScoreVector): number {
+  const userTopKeys = getTopPositiveKeys(scores, 5);
+  const personaSignature = getTopPositiveKeys(vector, 5);
+
+  if (userTopKeys.length === 0 || personaSignature.length === 0) {
+    return 0.5;
+  }
+
+  const overlap = personaSignature.filter((key) => userTopKeys.includes(key)).length;
+  return overlap / personaSignature.length;
+}
+
+function getTopPositiveKeys(vector: ScoreVector, count: number): DimensionKey[] {
+  return dimensionKeys
+    .filter((key) => (vector[key] ?? 0) > 0)
+    .sort((a, b) => (vector[b] ?? 0) - (vector[a] ?? 0))
+    .slice(0, count);
+}
+
+function clampSimilarity(value: number): number {
+  return Math.max(-1, Math.min(1, value));
 }

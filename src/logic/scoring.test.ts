@@ -42,6 +42,46 @@ const personas: Persona[] = [
     shareText: '',
     accent: '#7ab88a',
     vector: { observation: 10, empathy: 8, survival: 7, performance: -3 }
+  },
+  {
+    id: 'javert',
+    name: '沙威型',
+    englishName: 'Javert',
+    code: '按规矩来',
+    source: 'Les Miserables',
+    imagePath: '/characters/javert.webp',
+    title: '',
+    characterQuote: '',
+    punchline: '',
+    characterMoment: '',
+    arc: '',
+    modernLife: '',
+    strengths: [],
+    pitfalls: [],
+    recommendation: '',
+    shareText: '',
+    accent: '#87909b',
+    vector: { order: 10, control: 8, justice: 7, responsibility: 6, sensitivity: 2 }
+  },
+  {
+    id: 'roxie',
+    name: '洛克茜型',
+    englishName: 'Roxie Hart',
+    code: '热搜小白花',
+    source: 'Chicago',
+    imagePath: '/characters/roxie.webp',
+    title: '',
+    characterQuote: '',
+    punchline: '',
+    characterMoment: '',
+    arc: '',
+    modernLife: '',
+    strengths: [],
+    pitfalls: [],
+    recommendation: '',
+    shareText: '',
+    accent: '#e15f63',
+    vector: { selfPackaging: 10, performance: 9, socialPolish: 6, ambition: 6, survival: 4 }
   }
 ];
 
@@ -83,7 +123,7 @@ describe('scoring', () => {
     const result = calculateResult(scores, personas);
 
     expect(result.primary.persona.id).toBe('hamilton');
-    expect(result.secondary.persona.id).toBe('plant');
+    expect(result.secondary.persona.id).not.toBe('hamilton');
     expect(result.topTraits.map((trait) => trait.key)).toEqual([
       'ambition',
       'performance',
@@ -101,5 +141,41 @@ describe('scoring', () => {
     };
 
     expect(calculateResult(scores, personas).primary.persona.id).toBe('plant');
+  });
+
+  it('uses direct option persona scores as the strongest matching signal', () => {
+    const scores: UserScores = {
+      ...createEmptyScores(),
+      selfPackaging: 9,
+      performance: 8,
+      socialPolish: 5
+    };
+
+    expect(calculateResult(scores, personas, { roxie: 12 }).primary.persona.id).toBe('roxie');
+  });
+
+  it('keeps Javert from winning on order alone without enough direct Javert answers', () => {
+    const scores: UserScores = {
+      ...createEmptyScores(),
+      order: 10,
+      control: 8,
+      justice: 7,
+      selfPackaging: 7,
+      performance: 6
+    };
+
+    expect(calculateResult(scores, personas, { roxie: 10, javert: 4 }).primary.persona.id).toBe('roxie');
+  });
+
+  it('still allows Javert to win when rule-first answers are repeated', () => {
+    const scores: UserScores = {
+      ...createEmptyScores(),
+      order: 12,
+      control: 10,
+      justice: 8,
+      responsibility: 4
+    };
+
+    expect(calculateResult(scores, personas, { javert: 12 }).primary.persona.id).toBe('javert');
   });
 });

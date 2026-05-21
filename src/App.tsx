@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { questions } from './data/questions';
 import { personas } from './data/personas';
-import { addWeights, calculateResult, createEmptyScores } from './logic/scoring';
+import { addPersonaScores, addWeights, calculateResult, createEmptyPersonaScores, createEmptyScores } from './logic/scoring';
 import { getFirstUnansweredIndex, hasCompleteAnswers } from './logic/quizFlow';
 import type { PersonaMatch, QuizResult } from './types';
 
@@ -30,14 +30,16 @@ export default function App() {
     }
 
     let scores = createEmptyScores();
+    let personaScores = createEmptyPersonaScores();
     for (const question of questions) {
       const selected = question.options.find((option) => option.id === answers[question.id]);
       if (selected) {
         scores = addWeights(scores, selected.weights);
+        personaScores = addPersonaScores(personaScores, selected.personaScores);
       }
     }
 
-      return applyEasterEggTrigger(calculateResult(scores, personas), answers, personas);
+      return applyEasterEggTrigger(calculateResult(scores, personas, personaScores), answers, personas);
     }, [answers]);
 
   const currentQuestion = questions[currentIndex];
@@ -216,12 +218,12 @@ function HomeScreen({ onStart }: { onStart: () => void }) {
         <p className="kicker">Musical Character Type Indicator</p>
         <h1>测测你的音乐剧角色人格</h1>
         <p>
-          20 道当代生活情景题，不考剧目知识，看看你的日常反应更像哪位经典音乐剧角色。
+          19 道当代生活情景题，不考剧目知识，看看你的日常反应更像哪位经典音乐剧角色。
         </p>
       </div>
       <div className="home-stage-card" aria-hidden="true">
         <span>PLAYBILL</span>
-        <strong>20 scenes</strong>
+        <strong>19 scenes</strong>
         <em>角色匹配中</em>
       </div>
       <button className="primary-button" onClick={onStart} type="button">
@@ -264,11 +266,11 @@ function applyEasterEggTrigger(
 }
 
 function getTriggeredEasterEggId(answers: Record<number, string>) {
-  if (answers[15] === 'c' && answers[16] === 'c' && answers[18] === 'd') {
+  if (answers[15] === 'c' && answers[16] === 'd' && answers[19] === 'd') {
     return 'plant';
   }
 
-  if (answers[15] === 'd' && answers[17] === 'd' && answers[19] === 'b') {
+  if (answers[15] === 'a' && answers[17] === 'd' && answers[19] === 'b') {
     return 'curtain';
   }
 
@@ -744,7 +746,7 @@ async function createSharePosterBlob(result: QuizResult, roommate: QuizResult['s
 
   context.fillStyle = '#8a7b82';
   context.font = canvasFont(800, 10);
-  drawCenteredText(context, '20 道生活小事故，测出你的音乐剧人格', 195, 681);
+  drawCenteredText(context, '19 道生活小事故，测出你的音乐剧人格', 195, 681);
 
   const blob = await new Promise<Blob | null>((resolve) => {
     canvas.toBlob(resolve, 'image/png', 0.95);

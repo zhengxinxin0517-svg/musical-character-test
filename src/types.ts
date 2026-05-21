@@ -22,6 +22,8 @@ export type UserScores = Record<DimensionKey, number>;
 
 export type ScoreVector = Partial<UserScores>;
 
+export type PersonaScoreVector = Record<string, number>;
+
 export type Persona = {
   id: string;
   name: string;
@@ -58,6 +60,7 @@ export type QuizOption = {
   id: string;
   text: string;
   weights: ScoreVector;
+  personaScores?: PersonaScoreVector;
 };
 
 export type Question = {

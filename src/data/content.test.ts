@@ -24,14 +24,19 @@ describe('quiz content', () => {
     }
   });
 
-  it('contains 20 current-life scenario questions with four weighted options each', () => {
-    expect(questions).toHaveLength(20);
+  it('contains 19 current-life scenario questions with four persona-mapped options each', () => {
+    const personaIds = new Set(personas.map((persona) => persona.id));
+
+    expect(questions).toHaveLength(19);
     for (const question of questions) {
       expect(question.prompt).not.toMatch(/音乐剧|舞台上的舞蹈|诗篇|最终章/);
       expect(question.options).toHaveLength(4);
       for (const option of question.options) {
         expect(option.text.length).toBeGreaterThan(4);
         expect(Object.keys(option.weights).length).toBeGreaterThanOrEqual(2);
+        expect(option.personaScores).toBeDefined();
+        expect(Object.keys(option.personaScores ?? {})).toHaveLength(1);
+        expect(personaIds.has(Object.keys(option.personaScores ?? {})[0])).toBe(true);
       }
     }
   });
