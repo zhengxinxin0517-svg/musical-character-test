@@ -207,7 +207,7 @@ export const personas: Persona[] = [
     englishName: 'Roxie Hart',
     code: '热搜小白花',
     source: 'Chicago',
-    imagePath: '/characters/Roxie Hart.png',
+    imagePath: '/characters/Roxie Hart.jpg',
     momentMediaPath: '/moments/roxie-hart.mp4',
     momentMediaAlt: 'Roxie Hart scene clip',
     title: '翻车叙事家',
@@ -266,7 +266,7 @@ export const personas: Persona[] = [
     pitfalls: ['旧账太满', '容易把普通失望升级成终身判决'],
     recommendation: '从《Sweeney Todd》入坑，看伤痛、执念和黑色幽默如何一起上桌。',
     shareText: '《Sweeney Todd》由 Stephen Sondheim 作曲作词、Hugh Wheeler 编剧，1979 年在百老汇首演，改编自 Christopher Bond 的舞台剧。原版制作获得 8 项 Tony 奖，包括最佳音乐剧、最佳剧本和最佳原创配乐。它把复仇、阶级、黑色幽默和肉馅派搅在一起，优雅得让人不敢点外卖。',
-    accent: '#5f6b73',
+    accent: '#4b3f8f',
     vector: { resentmentMemory: 10, sensitivity: 8, justice: 5, control: 6, survival: 4 }
   },
   {

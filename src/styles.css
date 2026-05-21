@@ -583,6 +583,30 @@ button {
   opacity: 0.72;
 }
 
+.result-poster[data-persona="sweeney"] {
+  border-color: rgba(75, 63, 143, 0.38);
+  background:
+    radial-gradient(circle at 50% 5%, rgba(255, 255, 255, 0.92), transparent 120px),
+    radial-gradient(circle at 12% 22%, rgba(75, 63, 143, 0.16), transparent 150px),
+    radial-gradient(circle at 86% 30%, rgba(42, 50, 116, 0.14), transparent 130px),
+    radial-gradient(circle at 76% 88%, rgba(30, 28, 82, 0.12), transparent 180px),
+    linear-gradient(180deg, #fbf8ff 0%, #eeeaf8 52%, #e3e1f1 100%),
+    repeating-linear-gradient(120deg, rgba(75, 63, 143, 0.05) 0 1px, transparent 1px 20px);
+  box-shadow:
+    0 22px 52px rgba(75, 63, 143, 0.2),
+    0 1px 0 rgba(255, 255, 255, 0.92) inset;
+}
+
+.result-poster[data-persona="sweeney"]::before {
+  background:
+    linear-gradient(90deg, rgba(75, 63, 143, 0.1) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(42, 50, 116, 0.07) 1px, transparent 1px),
+    radial-gradient(circle at 14% 28%, rgba(255, 255, 255, 0.88) 0 1px, transparent 2px),
+    radial-gradient(circle at 72% 18%, rgba(75, 63, 143, 0.32) 0 1px, transparent 2px);
+  background-size: 44px 44px, 44px 44px, 118px 118px, 96px 96px;
+  opacity: 0.28;
+}
+
 .match-badge {
   border-radius: 999px;
   padding: 8px 12px;
