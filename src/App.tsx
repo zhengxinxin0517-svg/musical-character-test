@@ -266,12 +266,12 @@ function applyEasterEggTrigger(
 }
 
 function getTriggeredEasterEggId(answers: Record<number, string>) {
-  if (answers[4] === 'a' && answers[5] === 'a' && answers[16] === 'd') {
-    return 'plant';
+  if (answers[9] === 'b' && answers[13] === 'd' && answers[15] === 'd' && answers[19] === 'd') {
+    return 'curtain';
   }
 
-  if (answers[15] === 'a' && answers[17] === 'd' && answers[19] === 'b') {
-    return 'curtain';
+  if (answers[4] === 'a' && answers[5] === 'a' && answers[16] === 'd') {
+    return 'plant';
   }
 
   return null;
